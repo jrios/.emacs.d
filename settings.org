@@ -1,0 +1,168 @@
+* Personal details
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Jake Rios")
+(setq user-mail-address "rios.jacob@gmail.com")
+#+END_SRC
+
+
+* Emacs initialization
+- Turn off the splash screen
+- Set the scratch buffer to an empty message
+- Turn on org-mode as the major mode
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-splash-screen t
+      initial-scratch-message nil
+      initial-major-mode 'org-mode)
+#+END_SRC
+
+* User interface
+- Turn off the scroll bar, tool bar, and menu bar
+- Set the window default frame size to 155x50
+- Turn on column numbers in information buffer
+- Set tab width to 2 characters
+- Turn off tabs in order to use spaces instead
+#+BEGIN_SRC emacs-lisp
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(when window-system (set-frame-size (selected-frame) 155 50))
+(setq column-number-mode t)
+(setq tab-width 2)
+(setq indent-tabs-mode nil)
+#+END_SRC
+
+* User experience tweaks
+- Change yes or no prompt to use 'y' or 'n' for answers
+- Highlight matching parens
+- Do not make backup files
+- Do not display dialog boxes. Just use the mini buffer
+- Flash the frame to represent a bell
+
+** Make highlighting work as it does in other editors
+- Replace selections when typing with selected text
+- Highlight selections when using mark mode
+- Use clipboard for cut and paste
+
+#+BEGIN_SRC emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+(show-paren-mode t)
+(setq make-backup-files nil)
+(setq use-dialog-box nil)
+(setq visible-bell t)
+(delete-selection-mode t)
+(transient-mark-mode t)
+(setq select-enable-clipboard t)
+#+END_SRC
+
+* Programming minor modes
+- Turn on line-numbers
+- Turn on whitespace-mode
+- Turn on ability to move lines around using drag-stuff-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook (lambda()
+    (linum-mode t)
+    (whitespace-mode t)
+    (drag-stuff-mode t)))
+#+END_SRC
+
+** Whitespace
+- Run whitespace-cleanup function after saving files
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook (lambda()
+     (whitespace-cleanup)))
+#+END_SRC
+
+* Themes
+- Set up atom-one-dark theme
+#+BEGIN_SRC emacs-lisp
+(load-theme 'atom-one-dark t)
+#+END_SRC
+
+* Package customizations
+
+** js2-mode
+- Set the indent level to 2 spaces
+- Add keyboard shortcut to toggle on web-mode from js2-mode
+  This is so that editing JavaScript and JSX works ok
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook
+  (lambda()
+    (setq js-indent-level 2)))
+
+(eval-after-load 'js2-mode
+  '(define-key js2-mode-map (kbd "C-x w-m") 'web-mode))
+#+END_SRC
+
+** web-mode
+- Set web-mode as the default mode for JavaScript files
+- Add keyboard shortcut to toggle on js2-mode from web-mode
+  This is to make switching easier for editing JSX within a JavaScript file
+#+BEGIN_SRC
+(add-hook 'web-mode-hook
+  (lambda ()
+    (setq-default indent-tabs-mode nil)
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-attr-indent-offset 2)
+    (web-mode-set-content-type "jsx")))
+(eval-after-load 'web-mode
+  '(define-key web-mode-map (kbd "C-j C-s") 'js2-mode))
+#+END_SRC
+
+** Magit
+- Set global keyboard binding for loading the magit-status buffer
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x g") 'magit-status)
+#+END_SRC
+
+* Personal packages
+** SSH Agency
+   Turn on ssh-agency so that it will use the ssh-agent in windows. This helps to make sure pushing to git remotes will work when on windows.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/personal")
+(load "ssh-agency")
+#+END_SRC
+
+* Others
+#+BEGIN_SRC emacs-lisp
+;; Set path to include Shell path
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+;; Flycheck
+(add-hook 'after-init-hook #'global-flycheck-mode)
+(setq-default flycheck-disabled-checkers `(javascript-jshint))
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (less-css-mode powershell atom-one-dark-theme csharp-mode markdown-mode js2-mode web-beautify company flycheck web-mode material-theme magit)))
+ '(whitespace-display-mappings
+   (quote
+    ((space-mark 32
+                 [183]
+                 [46])
+     (space-mark 160
+                 [164]
+                 [95])
+     (tab-mark 9
+               [187 9]
+               [92 9]))))
+ '(whitespace-line-column 100))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:height 110 :family "Droid Sans Mono"))))
+ '(mode-line-buffer-id ((t (:foreground "#AAAAAA" :weight bold))))
+ '(mode-line-highlight ((t (:foreground "#FFFFFF" :box nil))))
+ '(whitespace-indentation ((t nil))))
+
+#+END_SRC

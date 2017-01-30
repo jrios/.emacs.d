@@ -4,7 +4,6 @@
 (setq user-mail-address "rios.jacob@gmail.com")
 #+END_SRC
 
-
 * Emacs initialization
 - Turn off the splash screen
 - Set the scratch buffer to an empty message
@@ -85,29 +84,27 @@
 - Add keyboard shortcut to toggle on web-mode from js2-mode
   This is so that editing JavaScript and JSX works ok
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js2-mode-hook
-  (lambda()
-    (setq js-indent-level 2)))
-
-(eval-after-load 'js2-mode
-  '(define-key js2-mode-map (kbd "C-x w-m") 'web-mode))
 #+END_SRC
 
 ** web-mode
 - Set web-mode as the default mode for JavaScript files
 - Add keyboard shortcut to toggle on js2-mode from web-mode
   This is to make switching easier for editing JSX within a JavaScript file
-#+BEGIN_SRC
-(add-hook 'web-mode-hook
-  (lambda ()
-    (setq-default indent-tabs-mode nil)
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :mode ("\\.js\\'" . web-mode)
+  :init
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
     (setq web-mode-markup-indent-offset 2)
     (setq web-mode-code-indent-offset 2)
     (setq web-mode-attr-indent-offset 2)
-    (web-mode-set-content-type "jsx")))
-(eval-after-load 'web-mode
-  '(define-key web-mode-map (kbd "C-j C-s") 'js2-mode))
+    (setq web-mode-content-types-alist
+      '("jsx"  . "\\.js[x]?\\'"))
+
+  :config
+    (web-mode-set-content-type "jsx")
+)
+
 #+END_SRC
 
 ** Magit
@@ -160,7 +157,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 110 :family "Inconsolata"))))
+ '(default ((t (:height 125 :family "Inconsolata"))))
  '(mode-line-buffer-id ((t (:foreground "#AAAAAA" :weight bold))))
  '(mode-line-highlight ((t (:foreground "#FFFFFF" :box nil))))
  '(whitespace-indentation ((t nil))))

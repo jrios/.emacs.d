@@ -26,8 +26,9 @@
 (menu-bar-mode -1)
 (when window-system (set-frame-size (selected-frame) 155 50))
 (setq column-number-mode t)
+(setq default-tab-width 2)
 (setq tab-width 2)
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 
 * User experience tweaks
@@ -67,8 +68,8 @@
 ** Whitespace
 - Run whitespace-cleanup function after saving files
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook (lambda()
-     (whitespace-cleanup)))
+ (add-hook 'after-save-hook (lambda()
+      (whitespace-cleanup)))
 #+END_SRC
 
 * Themes
@@ -77,13 +78,20 @@
 (load-theme 'atom-one-dark t)
 #+END_SRC
 
-* Package customizations
-
+* Packages
 ** js2-mode
 - Set the indent level to 2 spaces
 - Add keyboard shortcut to toggle on web-mode from js2-mode
   This is so that editing JavaScript and JSX works ok
 #+BEGIN_SRC emacs-lisp
+(use-package js2-mode-mode
+  :mode ("\\.js\\'" . js2-mode)
+  :bind ("C-c jsx" . js2-jsx-mode)
+  :config
+  (setq-default js2-basic-offset 2)
+)
+(custom-set-variables
+  '(js-indent-level 2))
 #+END_SRC
 
 ** web-mode
@@ -91,19 +99,6 @@
 - Add keyboard shortcut to toggle on js2-mode from web-mode
   This is to make switching easier for editing JSX within a JavaScript file
 #+BEGIN_SRC emacs-lisp
-(use-package web-mode
-  :mode ("\\.js\\'" . web-mode)
-  :init
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-code-indent-offset 2)
-    (setq web-mode-attr-indent-offset 2)
-    (setq web-mode-content-types-alist
-      '("jsx"  . "\\.js[x]?\\'"))
-
-  :config
-    (web-mode-set-content-type "jsx")
-)
 
 #+END_SRC
 

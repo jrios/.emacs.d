@@ -59,10 +59,19 @@
 - Turn on whitespace-mode
 - Turn on ability to move lines around using drag-stuff-mode
 #+BEGIN_SRC emacs-lisp
+(use-package drag-stuff
+  :ensure t
+)
+(use-package whitespace
+  :ensure t
+)
+
 (add-hook 'prog-mode-hook (lambda()
-    (linum-mode t)
-    (whitespace-mode t)
-    (drag-stuff-mode t)))
+  (linum-mode t)
+  (drag-stuff-mode t)
+  (whitespace-mode t)
+))
+
 #+END_SRC
 
 ** Whitespace
@@ -75,8 +84,15 @@
 * Themes
 - Set up atom-one-dark theme
 #+BEGIN_SRC emacs-lisp
-(load-theme 'atom-one-dark t)
+(use-package atom-one-dark-theme
+  :ensure t
+  :init
+  (setq atom-one-dark-theme t)
+  :config
+  (load-theme 'atom-one-dark t)
+)
 #+END_SRC
+
 
 * Packages
 ** js2-mode
@@ -121,40 +137,4 @@
 ;; Set path to include Shell path
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
-
-;; Flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(setq-default flycheck-disabled-checkers `(javascript-jshint))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (less-css-mode powershell atom-one-dark-theme csharp-mode markdown-mode js2-mode web-beautify company flycheck web-mode material-theme magit)))
- '(whitespace-display-mappings
-   (quote
-    ((space-mark 32
-                 [183]
-                 [46])
-     (space-mark 160
-                 [164]
-                 [95])
-     (tab-mark 9
-               [187 9]
-               [92 9]))))
- '(whitespace-line-column 100))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:height 125 :family "Inconsolata"))))
- '(mode-line-buffer-id ((t (:foreground "#AAAAAA" :weight bold))))
- '(mode-line-highlight ((t (:foreground "#FFFFFF" :box nil))))
- '(whitespace-indentation ((t nil))))
-
 #+END_SRC

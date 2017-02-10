@@ -33,7 +33,9 @@
 
 ;;; Code:
 
-(require 'dash)
+(use-package dash
+  :ensure t
+  )
 
 ;;; Options
 

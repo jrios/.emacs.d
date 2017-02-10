@@ -15,6 +15,7 @@
 #+END_SRC
 
 * User interface
+** Reset UI defaults
 - Turn off the scroll bar, tool bar, and menu bar
 - Set the window default frame size to 155x50
 - Turn on column numbers in information buffer
@@ -93,7 +94,6 @@
 )
 #+END_SRC
 
-
 * Packages
 ** js2-mode
 - Set the indent level to 2 spaces
@@ -121,7 +121,10 @@
 ** Magit
 - Set global keyboard binding for loading the magit-status buffer
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x g") 'magit-status)
+(use-package magit
+  :ensure t
+  :init
+    (global-set-key (kbd "C-x g") 'magit-status))
 #+END_SRC
 
 * Personal packages
@@ -136,5 +139,8 @@
 #+BEGIN_SRC emacs-lisp
 ;; Set path to include Shell path
 (when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize)
+  ))
 #+END_SRC

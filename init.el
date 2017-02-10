@@ -15,6 +15,18 @@
  (expand-file-name "settings.org"
                    user-emacs-directory))
 
+;; make up for the fact that windows and mac display heights differently
+(defun system-font-height()
+  (cond ((memq window-system '(mac ns)) (+ 165))
+        ((memq window-system '(w32))  (+ 125))
+))
+
+(set-face-attribute 'default nil
+                    :family "Inconsolata"
+                    :height (system-font-height)
+                    :weight 'normal
+                    :width 'normal)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -40,7 +52,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 125 :family "Inconsolata"))))
  '(mode-line-buffer-id ((t (:foreground "#AAAAAA" :weight bold))))
  '(mode-line-highlight ((t (:foreground "#FFFFFF" :box nil))))
  '(whitespace-hspace ((t (:background "#282c34" :foreground "darkgray"))))

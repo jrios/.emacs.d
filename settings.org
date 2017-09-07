@@ -1,5 +1,22 @@
+* Initialize packages
+#+BEGIN_SRC emacs-lisp :tangle yes
+(require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+
+(package-initialize)
+#+END_SRC
+
+* Bootstrap use-package
+#+BEGIN_SRC emacs-lisp :tangle yes
+ (unless (package-installed-p 'use-package)
+   (package-refresh-contents)
+   (package-install 'use-package))
+#+END_SRC
+
 * Personal details
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (setq user-full-name "Jake Rios")
 (setq user-mail-address "rios.jacob@gmail.com")
 #+END_SRC
@@ -8,10 +25,10 @@
 - Turn off the splash screen
 - Set the scratch buffer to an empty message
 - Turn on org-mode as the major mode
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-splash-screen t
-      initial-scratch-message nil
-      initial-major-mode 'org-mode)
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq inhibit-splash-screen t)
+(setq initial-scratch-message nil)
+(setq initial-major-mode 'org-mode)
 #+END_SRC
 
 * User interface
@@ -21,7 +38,7 @@
 - Turn on column numbers in information buffer
 - Set tab width to 2 characters
 - Turn off tabs in order to use spaces instead
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -32,11 +49,23 @@
 (setq-default indent-tabs-mode nil)
 #+END_SRC
 
+** Fonts
+#+BEGIN_SRC emacs-lisp :tangle yes
+; make up for the fact that windows and mac display heights differently
+(defun system-font-height()
+  (cond ((memq window-system '(mac ns)) (+ 180))
+        ((memq window-system '(w32))  (+ 125))))
+
+(set-face-attribute 'default nil
+  :font "Inconsolata"
+  :height (system-font-height))
+#+END_SRC
+
 * User experience tweaks
-- Change yes or no prompt to use 'y' or 'n' for answers
+- Just use 'y' or 'n' for answers because who wants to type "yes" or "no"
 - Highlight matching parens
 - Do not make backup files
-- Do not display dialog boxes. Just use the mini buffer
+- Do not display dialog boxes, use the mini buffer for confirmations
 - Flash the frame to represent a bell
 
 ** Make highlighting work as it does in other editors
@@ -44,57 +73,50 @@
 - Highlight selections when using mark mode
 - Use clipboard for cut and paste
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (defalias 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode t)
-(setq make-backup-files nil)
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq use-dialog-box nil)
-(setq visible-bell t)
+(setq visible-bell nil)
 (delete-selection-mode t)
 (transient-mark-mode t)
 (setq select-enable-clipboard t)
 #+END_SRC
 
 * Programming minor modes
-- Turn on line-numbers
-- Turn on whitespace-mode
-- Turn on ability to move lines around using drag-stuff-mode
-#+BEGIN_SRC emacs-lisp
-(use-package drag-stuff
-  :ensure t
-)
-(use-package whitespace
-  :ensure t
-)
-
+- Turn on line numbers when in a programming mode
+#+BEGIN_SRC emacs-lisp :tangle yes
 (add-hook 'prog-mode-hook (lambda()
-  (linum-mode t)
-  (drag-stuff-mode t)
-  (whitespace-mode t)
-))
-
+  (linum-mode t)))
 #+END_SRC
 
 ** Whitespace
-- Run whitespace-cleanup function after saving files
-#+BEGIN_SRC emacs-lisp
- (add-hook 'after-save-hook (lambda()
-      (whitespace-cleanup)))
+- Display whitespace in a cleaner way by removing the $ from the end of lines
+- Cleanup unnecessary whitespace before saving files
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq whitespace-display-mappings
+   '((space-mark 32 [183] [46])
+    (space-mark 160 [164] [95])
+    (tab-mark 9 [187 9] [92 9])))
+
+(add-hook 'before-save-hook (lambda()
+  (whitespace-cleanup)))
 #+END_SRC
 
 * Themes
-- Set up atom-one-dark theme
-#+BEGIN_SRC emacs-lisp
-(use-package atom-one-dark-theme
+I really like [[https://github.com/arcticicestudio/nord][nord color scheme]]. Ensure it's installed, set, and loaded.
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package nord-theme
   :ensure t
   :init
-  (setq atom-one-dark-theme t)
+  (setq nord-theme t)
   :config
-  (load-theme 'atom-one-dark t)
-)
+  (load-theme 'nord t))
 #+END_SRC
 
-* Packages
+* Javascript
+
 ** js2-mode
 - Set the indent level to 2 spaces
 - Add keyboard shortcut to toggle on web-mode from js2-mode
@@ -104,23 +126,18 @@
   :mode ("\\.js\\'" . js2-mode)
   :bind ("C-c jsx" . js2-jsx-mode)
   :config
-  (setq-default js2-basic-offset 2)
-)
-(custom-set-variables
-  '(js-indent-level 2))
+  (setq-default js2-basic-offset 2))
 #+END_SRC
 
-** web-mode
-- Set web-mode as the default mode for JavaScript files
-- Add keyboard shortcut to toggle on js2-mode from web-mode
-  This is to make switching easier for editing JSX within a JavaScript file
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq javascript-indent-level 2)
+#+END_SRC
 
 #+END_SRC
 
-** Magit
+* Magit
 - Set global keyboard binding for loading the magit-status buffer
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package magit
   :ensure t
   :init
@@ -138,9 +155,9 @@
 * Others
 #+BEGIN_SRC emacs-lisp
 ;; Set path to include Shell path
-(when (memq window-system '(mac ns))
-  (use-package exec-path-from-shell
-    :config
-    (exec-path-from-shell-initialize)
-  ))
+;(when (memq window-system '(mac ns))
+;  (use-package exec-path-from-shell
+;    :config
+;    (exec-path-from-shell-initialize)
+;  ))
 #+END_SRC

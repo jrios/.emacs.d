@@ -115,6 +115,18 @@ I really like [[https://github.com/arcticicestudio/nord][nord color scheme]]. En
   (load-theme 'nord t))
 #+END_SRC
 
+* Web Mode
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package web-mode
+  :mode ("\\.js$" . web-mode)
+  :config
+  (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+)
+
+#+END_SRC
 * Javascript
 
 ** js2-mode
@@ -144,6 +156,14 @@ I really like [[https://github.com/arcticicestudio/nord][nord color scheme]]. En
     (global-set-key (kbd "C-x g") 'magit-status))
 #+END_SRC
 
+* Ledger mode
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package ledger-mode
+  :ensure t
+  :mode ("\\.dat$" . ledger-mode)
+  :config
+  (setq ledger-binary-path "/usr/local/bin/ledger"))
+#+END_SRC
 * Personal packages
 ** SSH Agency
    Turn on ssh-agency so that it will use the ssh-agent in windows. This helps to make sure pushing to git remotes will work when on windows.

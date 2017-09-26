@@ -124,6 +124,7 @@ I really like [[https://github.com/arcticicestudio/nord][nord color scheme]]. En
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
+  (setq web-mode-enable-auto-quoting nil)
 )
 
 #+END_SRC
